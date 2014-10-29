@@ -1,10 +1,11 @@
 def options(ctx):
-  ctx.tool_options('compiler_cxx')
-  ctx.tool_options('unittest_gtest')
+  ctx.load('compiler_cxx')
+  ctx.load('unittest_gtest')
 
 def configure(ctx):
-  ctx.check_tool('compiler_cxx')
-  ctx.check_tool('unittest_gtest')
+  ctx.env.CXXFLAGS += ['-O2', '-Wall', '-g', '-pipe']
+  ctx.load('compiler_cxx')
+  ctx.load('unittest_gtest')
 
 def build(bld):
   bld.program(
