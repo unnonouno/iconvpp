@@ -9,6 +9,9 @@ before_install:
   - sudo mv cpplint.py /usr/local/bin
 
 script:
-  - ./waf configure
+  - ./waf configure --enable-gcov
   - ./waf --checkall
   - ./waf cpplint
+
+after_success:
+  - coveralls -b build -r . -E ".*_test.cpp" -E ".*/.unittest-gtest/.*" -x .cpp -x .hpp
