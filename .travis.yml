@@ -1,0 +1,9 @@
+language: cpp
+
+compiler:
+  - gcc
+
+script:
+  - ./waf configure
+  - ./waf --checkall
+  - ./waf cpplint
