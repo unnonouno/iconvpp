@@ -1,9 +1,13 @@
+// Copyright (c) 2011, Yuya Unno
+
+#include <string>
+
 #include <gtest/gtest.h>
 #include "iconv.hpp"
 
 namespace iconvpp {
 
-using namespace std;
+using std::string;
 
 TEST(iconv, trivial) {
   converter conv("EUC-JP", "UTF-8");
@@ -29,14 +33,14 @@ TEST(iconv, large) {
 }
 
 TEST(iconv, unsupported) {
-  EXPECT_THROW(converter("unknown", "UTF-8"), runtime_error);
-  EXPECT_THROW(converter("UTF-8", "unknown"), runtime_error);
+  EXPECT_THROW(converter("unknown", "UTF-8"), std::runtime_error);
+  EXPECT_THROW(converter("UTF-8", "unknown"), std::runtime_error);
 }
 
 TEST(iconv, invalid) {
   converter conv("UTF-8", "EUC-JP");
   string out;
-  EXPECT_THROW(conv.convert("あ", out), runtime_error);
+  EXPECT_THROW(conv.convert("あ", out), std::runtime_error);
 }
 
 TEST(iconv, ignore_error) {
@@ -46,7 +50,7 @@ TEST(iconv, ignore_error) {
 }
 
 TEST(iconv, zero_buffer) {
-  EXPECT_THROW(converter("UTF-8", "EUC-JP", false, 0), runtime_error);
+  EXPECT_THROW(converter("UTF-8", "EUC-JP", false, 0), std::runtime_error);
 }
 
-}
+}  // namespace iconvpp

@@ -28,8 +28,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include <errno.h>
 #include <iconv.h>
+
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace iconvpp {
 
@@ -48,7 +52,8 @@ class converter {
     iconv_t conv = ::iconv_open(out_encode.c_str(), in_encode.c_str());
     if (conv == (iconv_t)-1) {
       if (errno == EINVAL)
-        throw std::runtime_error("not supported from " + in_encode + " to " + out_encode);
+        throw std::runtime_error(
+            "not supported from " + in_encode + " to " + out_encode);
       else
         throw std::runtime_error("unknown error");
     }
@@ -60,7 +65,8 @@ class converter {
   }
 
   void convert(const std::string& input, std::string& output) const {
-    // copy the string to a buffer as iconv function requires a non-const char pointer
+    // copy the string to a buffer as iconv function requires a non-const char
+    // pointer.
     std::vector<char> in_buf(input.begin(), input.end());
     char* src_ptr = &in_buf[0];
     size_t src_size = input.size();
@@ -104,4 +110,4 @@ class converter {
   const size_t buf_size_;
 };
 
-}
+}  // namespace iconvpp
