@@ -97,7 +97,6 @@ class converter {
   void check_convert_error() const {
     switch (errno) {
       case EILSEQ:
-        throw std::runtime_error("invalid multibyte chars");
       case EINVAL:
         throw std::runtime_error("invalid multibyte chars");
       default:
