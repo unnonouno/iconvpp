@@ -4,9 +4,7 @@ compiler:
   - gcc
 
 before_install:
-  - wget http://google-styleguide.googlecode.com/svn/trunk/cpplint/cpplint.py
-  - chmod +x cpplint.py
-  - sudo mv cpplint.py /usr/local/bin
+  - pip install cpplint --user
 
 script:
   - ./waf configure
