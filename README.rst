@@ -38,6 +38,12 @@ Usage
  std::string output;
  conv.convert(input, output);
 
+ // or convert in-place and reuse the converter
+ input = "...some str...";
+ conv.try_convert(input);
+ input = "...another str...";
+ conv.try_convert(input);
+
 
 See 'iconv_test.cpp' for more examples.
 
