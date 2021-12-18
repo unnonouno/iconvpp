@@ -53,4 +53,56 @@ TEST(iconv, zero_buffer) {
   EXPECT_THROW(converter("UTF-8", "EUC-JP", false, 0), std::runtime_error);
 }
 
+TEST(iconv, largeGBK) {
+  // '烫' in GBK and UTF-8
+  std::string gbk_char ("\xCC\xCC");
+  std::string utf_char ("\xE7\x83\xAB");
+  std::string in;
+  std::string out;
+  for (int i = 0; i < 2048; ++i) {
+    in.append("x").append(gbk_char).append("x");
+    out.append("x").append(utf_char).append("x");
+  }
+
+  converter conv("UTF-8", "GBK");
+  std::string out_cv;
+  conv.convert(in, out_cv);
+  EXPECT_EQ(out, out_cv);
+
+  converter reconv("GBK", "UTF-8");
+  std::string in_cv;
+  reconv.convert(out, in_cv);
+  EXPECT_EQ(in, in_cv);
+}
+
+TEST(iconv, multry) {
+  std::string gbk_char {"\xCC\xCC"};
+  std::string gbk_line = gbk_char + "--" + gbk_char + "\n";
+  std::string utf_char{"\xE7\x83\xAB"};
+  std::string utf_line = utf_char + "--" + utf_char + "\n";
+
+  iconvpp::converter gbk2utf("UTF-8", "GBK", true);
+
+  std::string input;
+  std::string output;
+  bool ok = false;
+
+  for (int i = 0; i < 8; ++i) {
+    input.clear();
+    output.clear();
+    for (int n = 0; n <= i; ++n) {
+      input.append(gbk_line);
+      output.append(utf_line);
+    }
+    ok = gbk2utf.try_convert(input);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(input, output);
+  }
+
+  // should fail convert as input already in utf now.
+  ok = gbk2utf.try_convert(input);
+  EXPECT_TRUE(!ok);
+  EXPECT_EQ(input, output);
+}
+
 }  // namespace iconvpp

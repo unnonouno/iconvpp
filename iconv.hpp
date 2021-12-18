@@ -93,6 +93,24 @@ class converter {
     dst.swap(output);
   }
 
+  // convert a small piece of string `input` in-place.
+  // return false if convert failed and not modify input.
+  // can reuse the converter object and thread safe.
+  bool try_convert(std::string& input) const {
+    reset();
+    char* src_ptr = const_cast<char*>(input.c_str());
+    size_t src_size = input.size();
+    std::vector<char> buf(input.size() * 2);
+    char* dst_ptr = &buf[0];
+    size_t dst_size = buf.size();
+    size_t res = ::iconv(iconv_, &src_ptr, &src_size, &dst_ptr, &dst_size);
+    if (res == (size_t)-1) {
+        return false;
+    }
+    input.assign(&buf[0], buf.size() - dst_size);
+    return true;
+  }
+
  private:
   void check_convert_error() const {
     switch (errno) {
@@ -102,6 +120,11 @@ class converter {
       default:
         throw std::runtime_error("unknown error");
     }
+  }
+
+  // reset the conversion state to the initial state
+  void reset() const {
+    ::iconv(iconv_, NULL, NULL, NULL, NULL);
   }
 
   iconv_t iconv_;
